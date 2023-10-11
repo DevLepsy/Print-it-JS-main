@@ -18,4 +18,11 @@ function initSlider() {
       tagLine: "Autocollants <span>avec découpe laser sur mesure</span>",
     },
   ];
+
+  const ddotsContainer = document.querySelector(".dots");
+  const arrowLeft = document.querySelector(".arrow_left");
+  const arrowRight = document.querySelector(".arrow_right");
+  const imageElement = document.querySelector(".banner-img");
+  const textElement = document.querySelector("#banner p");
+  let currentSlideIndex = 0;
 }
