@@ -1,68 +1,80 @@
-const slides = [
-  {
-    image: "./assets/images/slideshow/slide1.jpg",
-    tagLine: "Impressions tous formats <span>en boutique et en ligne</span>",
-  },
-  {
-    image: "./assets/images/slideshow/slide2.jpg",
-    tagLine:
-      "Tirages haute définition grand format <span>pour vos bureaux et events</span>",
-  },
-  {
-    image: "./assets/images/slideshow/slide3.jpg",
-    tagLine: "Grand choix de couleurs <span>de CMJN aux pantones</span>",
-  },
-  {
-    image: "./assets/images/slideshow/slide4.png",
-    tagLine: "Autocollants <span>avec découpe laser sur mesure</span>",
-  },
-];
+function initSlider() {
+  const slides = [
+    {
+      image: "slide1.jpg",
+      tagLine: "Impressions tous formats <span>en boutique et en ligne</span>",
+    },
+    {
+      image: "slide2.jpg",
+      tagLine:
+        "Tirages haute définition grand format <span>pour vos bureaux et events</span>",
+    },
+    {
+      image: "slide3.jpg",
+      tagLine: "Grand choix de couleurs <span>de CMJN aux pantones</span>",
+    },
+    {
+      image: "slide4.png",
+      tagLine: "Autocollants <span>avec découpe laser sur mesure</span>",
+    },
+  ];
 
-let currentIndex = 0;
-const img = document.querySelector(".banner-img");
-const txt = document.querySelector("p");
-const dotsContainer = document.querySelector(".dots");
+  const dotsContainer = document.querySelector(".dots");
+  const arrowLeft = document.querySelector(".arrow_left");
+  const arrowRight = document.querySelector(".arrow_right");
+  const imageElement = document.querySelector(".banner-img");
+  const textElement = document.querySelector("#banner p");
+  let currentSlideIndex = 0;
 
-// Function to create dots and attach event listeners
-function setupSlider() {
-  slides.forEach((_, index) => {
-    const dot = document.createElement("div");
-    dot.className = "dot";
-    dot.addEventListener("click", () => updateSlide(index));
-    dotsContainer.appendChild(dot);
-  });
+  function generateDots() {
+    slides.forEach(() => {
+      const dot = document.createElement("div");
+      dot.classList.add("dot");
+      dotsContainer.appendChild(dot);
+    });
+  }
 
-  updateSlide(currentIndex); // Initialize slide to the first one
+  function updateSlide() {
+    imageElement.src = `./assets/images/slideshow/${slides[currentSlideIndex].image}`;
+    textElement.innerHTML = slides[currentSlideIndex].tagLine;
+    document
+      .querySelectorAll(".dot")
+      .forEach((dot) => dot.classList.remove("dot_selected"));
+    document
+      .querySelectorAll(".dot")
+      [currentSlideIndex].classList.add("dot_selected");
+  }
 
-  document
-    .querySelectorAll(".arrow_left, .arrow_right")
-    .forEach((arrow) =>
-      arrow.addEventListener("click", ({ target }) =>
-        updateSlide(
-          target.classList.contains("arrow_left")
-            ? currentIndex - 1
-            : currentIndex + 1
-        )
-      )
-    );
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-      updateSlide(e.key === "ArrowLeft" ? currentIndex - 1 : currentIndex + 1);
+  function handleArrowClick(isLeft) {
+    if (isLeft) {
+      currentSlideIndex =
+        (currentSlideIndex - 1 + slides.length) % slides.length;
+    } else {
+      currentSlideIndex = (currentSlideIndex + 1) % slides.length;
     }
-  });
+    updateSlide();
+  }
+
+  function handleKeyDown(event) {
+    switch (event.key) {
+      case "ArrowLeft":
+        handleArrowClick(true);
+        break;
+      case "ArrowRight":
+        handleArrowClick(false);
+        break;
+      default:
+        break;
+    }
+  }
+
+  window.addEventListener("keydown", handleKeyDown);
+
+  generateDots();
+  updateSlide();
+
+  arrowLeft.addEventListener("click", () => handleArrowClick(true));
+  arrowRight.addEventListener("click", () => handleArrowClick(false));
 }
 
-// Function to update slide based on current index
-function updateSlide(newIndex) {
-  currentIndex = (newIndex + slides.length) % slides.length; // Ensure currentIndex is always within bounds
-  img.src = slides[currentIndex].image;
-  txt.innerHTML = slides[currentIndex].tagLine;
-  document
-    .querySelectorAll(".dot")
-    .forEach((dot, index) =>
-      dot.classList.toggle("dot_selected", index === currentIndex)
-    );
-}
-
-setupSlider();
+initSlider();
